@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  version: '0.0.1'
+  title: 'Customer Account'
+  description: 'CustomerAccount Microservice API'
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/aaxis/TelcoCustomerAccount/0.0.1
+
+paths:
+
+  /customerAccounts:
+    post:
+      description: Create or Update Customer Account
+      requestBody:
+        description: description
+        content:
+            "application/json":
+              schema:
+                $ref: './TelcoDomain.yaml#/definitions/CustomerAccount'
+      responses:
+        200:
+          description: Ok
+        400:
+          description: InvalidRequest
+
+  /customerAccounts/{id}:
+    get:
+      description: Get Customer Account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: The Account
+          content:
+            application/json:
+              schema:
+               $ref: './TelcoDomain.yaml#/definitions/CustomerAccount'
+        404:
+          description: NotFound
+
+  /customerAccounts/{id}/billingAccount/{billingid}:
+    get:
+      description: Get Billing Account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: billingid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: The Account
+          content:
+            application/json:
+              schema:
+                $ref: './TelcoDomain.yaml#/definitions/BillingAccount'
+        404:
+          description: NotFound

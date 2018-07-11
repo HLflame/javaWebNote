@@ -1,0 +1,229 @@
+info:
+  description: 'Domain definition for telco domain'
+  version: '0.0.1'
+  title: Telco Domain
+
+definitions:
+## CustomerAccount
+  CustomerAccount:
+    type: object
+    required:
+      - "id"
+      - "accountNumber"
+    properties:
+      id:
+        type: string
+        example: '90128444'
+      accountNumber:
+        type: string
+        example: '14191368-9'
+      accountOwner:
+        $ref: '#/definitions/OwnerInfo'
+      billingAccountIds:
+        type: array
+        items:
+          type: string
+      serviceAccountIds:
+        type: array
+        items:
+          type: string
+      extraData:
+        type: string
+        example: '{"cliente":{"apellidoMaterno":"RUBILAR","apellidoPaterno":"OLIVARES","celularDeContacto":"+56963403629","checkAceptacionCondicionesDeUso":"TRUE","checkEnvioInformacionVTR":"FALSE","emailDeContacto":"ricardo.aor@gmail.com","estadoCivil":"1","fechaAniversarioMatrimonio":null,"fechaCreacionComoCliente":1404975630000,"fechaDeNacimiento":342932400000,"fechaUltimaModificacionDePerfil":1525987838000,"fijoDeContacto":"+562","flagTipoPersona":"N","genero":"M","nombres":"RICARDO","rut":"0014191368-9","usuario":"ricardo.aor@gmail.com","existe":true}}'
+
+
+  BillingAccount:
+    type: object
+    properties:
+      id:
+        type: string
+        example: '89819065'
+      customerAccountId:
+        type: string
+        example: '0014191368-9'
+      serviceAccountId:
+        type: string
+        example: '89819065'
+      accountBalance:
+        $ref: '#/definitions/Currency'
+      billingAddress:
+        $ref: '#/definitions/BillingAddress'
+      payments:
+        type: array
+        items:
+          $ref: '#/definitions/Payment'
+      invoices:
+        type: array
+        items:
+          $ref: '#/definitions/Invoice'
+      extraData:
+        type: string
+        example: '{"cliente":{"deudaCliente":{"NombreCliente":"OLIVARES RUBILAR, RICARDO","RutCliente":"14191368-9","SaldoTotal":29763,"detalleCuentas":[{"NumeroCuenta":"89819065","SaldoCuenta":29763,"FechaVencimiento":"2018-05-16T23:00:00.000-0400"}],"detalleDocumentos":[{"NumeroCuenta":"89819065","NumeroDocumento":"131937252","SaldoDocumento":29763,"FechaVencimientoDcto":"2018-05-16T23:00:00.000-0400","FechaEmisionDcto":"2018-04-23T00:00:00.000-0300","DireccionCobranza":"PJE MATICO 2931","TipoCorrelativo":"Boleta","CodTipoDocumento":"BO"}]},"deuda":true}}'
+
+  Invoice:
+    type: object
+    # XXX: TBD
+    required:
+      - invoiceNumber
+    properties:
+        invoiceNumber:
+          type: string
+        invoiceTotal:
+          $ref: '#/definitions/Currency'
+
+  OwnerInfo:
+    type: object
+    required:
+      - name
+      - documentID
+      - documentType
+      - entityType
+    properties:
+      name:
+        type: string
+        example: 'RICARDO'
+      documentID:
+        type: string
+        example: '14191368-9'
+      documentType:
+        type: string
+        example: 'rut'
+      taxStatus:
+        type: string
+        example: 'null'
+      entityType:
+        type: string
+        example: 'null'
+      emailAddress:
+        type: string
+        example: 'ricardo.aor@gmail.com'
+      phoneNumber:
+        type: string
+        example: '+56963403629'
+      address:
+        $ref: '#/definitions/Address'
+
+  Payment:
+    type: object
+    # XXX: TBD
+
+  Currency:
+    type: object
+    required:
+      - amount
+    properties:
+      amount:
+        type: number
+        format: currency
+        example: '0'
+      currencyCode:
+        type: string
+        example: 'CL'
+
+  ## ServiceAccount
+  ServiceAccount:
+    type: object
+    properties:
+      id:
+        type: string
+        example: '89819065'
+      services:
+        type: array
+        items:
+          $ref: '#/definitions/ProvisionedProduct'
+      billingAccountId:
+        type: string
+        example: '89819065'
+      customerAccountId:
+        type: string
+        example: '0014191368-9'
+      serviceAddress:
+        $ref: '#/definitions/Address'
+      subscribedProducts:
+        type: array
+        items:
+          $ref: '#/definitions/SubscribedProduct'
+      extraData:
+        type: string
+        example: '{"cliente":{"direcciones":[{"DESC_LOCALIDAD":"San Bernardo","CODI_LOCALIDAD":"SBER","GLSA_VIVIENDA":"PJE MATICO 2931","IDEN_VIVIENDA":"15323197","numeroCuenta":[{"numeroCuenta":"89819065","pat":{"pat":false}}],"contratos":[{"dirPostal":"PJE MATICO 2931","idCuenta":"89819065","email":"ricardo.olivares@vtr.cl","isPat":false,"tipoIdentificador":"TANGO","tipoSuscripcion":"E","saldoPendiente":29763,"fechaVencimiento":"2018-05-16T23:00:00.000-0400","isVencida":false,"APPTYPE":"DIREC"}],"servicios":[[{"CODI_CLASSERV":"2WAY"},{"CODI_CLASSERV":"C001"},{"CODI_CLASSERV":"F001"},{"CODI_CLASSERV":"PREM"}]],"productosCliente":[{"titulo":"Internet","data":[{"servicio":{"cantidad":1,"producto":{"CODI_CLASSERV":"2WAY","NOMB_PRODUCTO":"Mega 160","CORR_CONCEPTO":299416640,"IDEN_GRUPOTAR":12429,"IDEN_SERVICIO":26846248,"DESC_PRODUCTONE":"PRecomendado para un uso avanzado de Internet, para familias muy tecnológicas que quieren disfrutar de la mejor  banda ancha, compartiendo la conexión en hasta 16 dispositivos simultáneos con la mejor experiencia (notebooks, smartphones, tablets, smartvs, consolas, parlantes wifi,etc). Velocidad de Bajada de hasta 160 Mbps / Velocidad de Subida de hasta 8 Mbps / WiFi incluido"}}}]},{"titulo":"Cable","data":[{"servicio":{"cantidad":2,"producto":{"CODI_CLASSERV":"C001","NOMB_PRODUCTO":"TV Full HD Digital","CORR_CONCEPTO":202006377,"IDEN_GRUPOTAR":30958,"IDEN_SERVICIO":26841677,"DESC_PRODUCTONE":"PLa más completa grilla de canales de todas las categorías y gran calidad de contenido, junto a una amplia variedad de canales HD. Incluye un decodificador d-BOX HD. Consulta la grilla completa de canales para tu comuna en vtr.com/hogar."}}}]},{"titulo":"Telefonía","data":[{"servicio":{"cantidad":3,"producto":{"CODI_CLASSERV":"F001","NOMB_PRODUCTO":"Fono Ilimitado 600 Móvil","CORR_CONCEPTO":299440668,"IDEN_GRUPOTAR":29827,"IDEN_SERVICIO":26846225,"DESC_PRODUCTONE":"PEste plan permite realizar llamadas ilimitadas entre teléfonos de red fija de cualquier compañía e incluye 600 minutos mensuales para llamadas a teléfonos móviles. Una vez consumidos los 300 minutos, las llamadas a móviles se cobrarán según las tarifas vigentes en VTR. Renta mensual no incluye llamadas a Isla de Pascua o al 103, ni aquellas llamadas dirigidas a compañías locales o rurales en que se incluyan recargos al valor de la llamada local por sobre la tarifa del SLM. Tampoco incluye tráfico de datos o Internet, llamadas de larga distancia internacional, llamadas a móviles después de consumidos los 300 minutos incluidos, a números 700, 300, 606 y 609 y servicios adicionales, las que se cobrarán según las tarifas vigentes en VTR o del proveedor respectivo. Para activar el acceso al servicio de larga distancia internacional, a móviles y/o servicios 700, se requerirá de autorización expresa del cliente. El plan mantiene siempre el acceso a teléfonos de emergencia y al 600 800 9000."}}}]}],"isDeco":true,"menuCount":4,"idServicioInternet":26846248,"isInternet":true,"idServicioCable":26841677,"isCable":true,"isTelefonia":true,"APPTYPE":"DIREC"}]}}'
+
+  ServiceAccountDetail:
+    type: object
+    allOf:
+      - $ref: '#/definitions/ServiceAccount'
+      - type: object
+        properties:
+          subscribedProducts:
+            type: array
+            items:
+              $ref: '#/definitions/SubscribedProductDetail'
+
+
+  SubscribedProduct:
+    type: object
+    properties:
+      id:
+        type: string
+        example: '90128444'
+      productType:
+        type: string
+        example: 'movil'
+      serviceAccountId:
+        type: string
+        example: '90128444'
+      subscriptionType:
+        type: string
+        example: 'postpay'
+      productId:
+        type: string
+        example: '963403629'
+      price:
+        $ref: '#/definitions/Currency'
+
+  SubscribedProductDetail:
+    type: object
+    allOf:
+      - $ref: '#/definitions/SubscribedProduct'
+      - type: object
+
+  ProvisionedProduct:
+    type: object
+    properties:
+      id:
+        type: string
+        example: '90128444'
+      productType:
+        type: string
+        example: 'TV'
+      productId:
+        type: string
+        example: '963403629'
+      deviceIds:
+        type: array
+        items:
+          type: string
+
+## Address
+  Address:
+    type: object
+    required:
+      - address1
+      - city
+    properties:
+      address1:
+        type: string
+        example: 'PJE MATICO 2931'
+      city:
+        type: string
+        example: 'San Bernardo'
+      country:
+        type: string
+        example: 'CL'
+
+  BillingAddress:
+    allOf:
+      - $ref: '#/definitions/Address'
+      - type: object
+        properties:
+          postalCode:
+            type: string

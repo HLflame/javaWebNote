@@ -1,0 +1,70 @@
+plugins {
+    id "org.springframework.boot" version "2.0.2.RELEASE"
+    id "com.jfrog.artifactory" version "4.7.3"
+}
+apply from: "$rootDir/gradle/aaxis-maven-publishing.gradle"
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group 'com.aaxiscommerce'
+version '1.0.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        url 'http://repo.spring.io/plugins-release/'
+    }
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    testCompile 'org.openapitools:openapi-generator-cli:3.0.1'
+    compile 'io.springfox:springfox-swagger2:2.9.0'
+    compile 'io.springfox:springfox-swagger-ui:2.9.0'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+}
+
+def baseJavaFolder = new File('src/main/java')
+def domainPackage = 'com.aaxiscommerce.telco.model'
+def apiPackeage = 'com.aaxiscommerce.telco.api'
+task cleanAPIFiles(){
+    doLast(){
+        def fileGenerateFolder = [
+                new File(baseJavaFolder, "com/aaxiscommerce"),
+                new File(baseJavaFolder, "/org/openapitools")
+        ]
+        println "Cleaning ${fileGenerateFolder}"
+        fileGenerateFolder.each {
+            file -> GFileUtils.deleteDirectory(file)
+        }
+
+    }
+}
+
+task generateAPIFiles(){
+    doLast(){
+        def jarFile = project.configurations.testCompile.find { it.name.contains("openapi-generator-cli") }
+        def yamlFileLocations = ['src/main/resources/openapi/TelcoCustomerAccount.yaml', 'src/main/resources/openapi/TelcoServiceAccount.yaml']
+
+        yamlFileLocations.each { file ->
+            println( "java -jar ${jarFile} generate -i ${file} -g spring --model-package ${domainPackage}" )
+            "java -jar ${jarFile} generate -i ${file} -g spring --model-package ${domainPackage} --api-package ${apiPackeage} -DhideGenerationTimestamp=true".execute()
+            //commandLine "java", "-jar", "${jarFile}", "generate", '-i', "${file}", '-g', 'spring', '--model-package', "${outputLocation}"
+        }
+//        GFileUtils.listFiles(new File(baseJavaFolder, apiPackeage.replace('.','/'))).each {
+//            file -> GFileUtils
+//        }
+
+    }
+}
+
+jar{
+    enabled=true
+    include('**/'+domainPackage.replace('.','/')+'/**')
+}
+bootJar{
+    baseName = "${jar.baseName}-boot"
+}

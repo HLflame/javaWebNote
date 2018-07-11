@@ -1,0 +1,35 @@
+ext{
+    artifactory_user='adompang'
+    //artifactory_password=APBc4pGrbmvn8o2X5iWiuyXvsxQ
+    //artifactory_contextUrl=https://artifactory.aaxischina.net:443
+    artifactory_password='AP32njccvh35m4HLpfjRExRgoVk'
+    artifactory_contextUrl='https://solution.aaxisgroup.net/artifactory'
+}
+
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: "com.jfrog.artifactory"
+
+artifactoryPublish.dependsOn('jar')
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
+    publish {
+        repository {
+            repoKey = 'libs-snapshot-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+
+        }
+        defaults {
+            publications ('mavenJava')
+        }
+    }
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}

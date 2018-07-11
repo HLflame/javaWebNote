@@ -1,0 +1,9 @@
+repositories {
+    maven {
+        credentials {
+            username 'adompang'
+            password 'PCCwlt529'
+        }
+        url "https://solution.aaxisgroup.net/artifactory/libs-snapshot-local"
+    }
+}
